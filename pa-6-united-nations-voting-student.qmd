@@ -178,6 +178,7 @@ roll_calls |>
 
 > Description of code results
 
+The code results a short description of the votes
 
 
 We can use the individual data for `roll_calls` to look at the number of votes per year over time.
@@ -193,11 +194,9 @@ roll_calls |>
   theme_minimal()
 ```
 
-
-
 What information is missing from the above graphic that might be useful in understanding the issues the UN commonly votes on?
 
-> Insert Answer Here
+> Variables `para` or `amen` couuld be useful in the graphic
 
 
 
@@ -209,7 +208,7 @@ roll_calls |>
 
 Does the above information help us understand the voting issues of the UN over time? Explain.
 
-> Insert your answer here
+> The information is disorganized, not very explanatory. 
 
 
 

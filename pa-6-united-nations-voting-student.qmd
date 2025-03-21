@@ -15,7 +15,7 @@ execute:
   warning: false
 ---
 
-```{r}
+```{r setup}
 #| label: setup
 #| include: false
 library(tidyverse)
@@ -75,7 +75,7 @@ Here is each data set and its description (you might want to look at the Tidy Tu
 |vote         |integer   | Vote result as a factor of yes/abstain/no |
 
 
-```{r}
+```{r data-votes}
 unvotes <- read_csv("data/unvotes.csv")
 ```
 
@@ -96,7 +96,7 @@ unvotes <- read_csv("data/unvotes.csv")
 |descr         |character | Longer description|
 
 
-```{r}
+```{r data-roll}
 #edit to read in roll_calls
 roll_calls <- read_csv("data/roll_calls.csv")
 ```
@@ -111,7 +111,7 @@ roll_calls <- read_csv("data/roll_calls.csv")
 |short_name |character | Two-letter issue codes |
 |issue      |integer   | Descriptive issue name |
 
-```{r}
+```{r data-issues}
 #edit to read in issues
 
 issues <- read_csv("data/issues.csv")
@@ -134,7 +134,7 @@ The first data set, `unvotes` contains data on the `rcid` which is the roll call
 
 Comment on the following code, what is happening in each line?  One way to approach seeing what each line does is to highlight the code from before the `pipe` of that line up to the data `unvotes` and use `CTRL + ENTER` to run just the highlighted lines.  
 
-```{r}
+```{r ggplot-unvotes}
 unvotes |> 
   count(country, vote) |> #creates a summary table with the number of votes per country
   group_by(country) |> #groups by country
@@ -171,7 +171,7 @@ unvotes |>
 
 The second data set, `roll_calls` has more information on the type of vote, the importance, whether it was a resolution, and date of the vote.  What does eh following code do?
 
-```{r}
+```{r distinct}
 roll_calls |> 
   distinct(short)
 ```
@@ -183,7 +183,7 @@ The code results a short description of the votes
 
 We can use the individual data for `roll_calls` to look at the number of votes per year over time.
 
-```{r}
+```{r ggplot-line}
 roll_calls |> 
   mutate(year = lubridate::year(date)) |> #extracts the year from the date value and creates a new `year` column
   count(year) |> #counts how many votes there were per year assuming each line is an single voting instance
@@ -201,7 +201,7 @@ What information is missing from the above graphic that might be useful in under
 
 
 We could try and look at the short descriptions, `short`, for each vote with the following code. 
-```{r}
+```{r count-short}
 roll_calls |> 
   count(short)
 ```
@@ -218,7 +218,7 @@ Does the above information help us understand the voting issues of the UN over t
 ### Issues 
 Finally we have the `issues` data which provides a more general description for each vote on specific issues.  Note that not all issues are included in the data set, just the ones related to the 6 issues below:
 
-```{r}
+```{r count-issues}
 issues |> 
   count(issue)
 ```
@@ -231,7 +231,7 @@ It would be helpful to use the `issues` data with the `roll_calls` data to be ab
 Now let's join our data together to get a better idea of how the UN has voted over time.  
 First, look at the number of rows in `issues` and `roll_calls` - do they match? What does this indicate?
 
-```{r}
+```{r dim}
 dim(issues)
 dim(roll_calls)
 ```
@@ -276,18 +276,18 @@ roll_calls |>
 Now that we know how to join the data, we will use the following code to examine the the voting trends for three of the issues related to conflict/weapons. 
 
 Be sure to run the code via the green arrow on the code chunk, as the `case_when()` code can get finicky sometimes and claim an error about a comma in the code when it doesn't exist.  *Comment on the code where indicated* and add your chosen join function
-```{r}
+```{r line-graph}
 roll_calls |> 
-  _________(issues, by = "rcid") |>  #join roll_calls and issues so that just the votes related to the issues data are retained.
+  right_join(issues, by = "rcid") |>  #join roll_calls and issues so that just the votes related to the issues data are retained.
   mutate(issue = case_when(
     issue == "Arms control and disarmament" ~ "Arms Control",
     issue == "Nuclear weapons and nuclear material" ~ "Nuclear Weapons",
-    issue == "Palestinian conflict" ~ "Palestinian Conflict")) |>   #what is happening in this mutate function?
-  drop_na(issue) |> #drop NAs for values not defined in the previous line of code
-  mutate(year = lubridate::year(date)) |> #create a column `year` that contains the year value
-  count(year, issue) |> #what does this line do?
-  ggplot(aes(x = year, y = n, group = issue)) + #what does this line do?
-  geom_line(aes(color = issue)) + #what does this line do?
+    issue == "Palestinian conflict" ~ "Palestinian Conflict")) |>   # its creating a new variable called `issue`, renaming the issues 
+  drop_na(issue) |> # drop NA's for values not defined in the previous line of code
+  mutate(year = lubridate::year(date)) |> # create a column `year` that contains the year value
+  count(year, issue) |> # counts the number of issues within each year
+  ggplot(aes(x = year, y = n, group = issue)) + # creates the figure and the mapping, groups by issue
+  geom_line(aes(color = issue)) + # creates a line graph, adds color to distinguish the issues
   labs(x = "Year", y = "Number of Votes",
        title = "United Nations Votes per Year",
        subtitle = "Conflict and Arms Related Votes",
@@ -296,10 +296,8 @@ roll_calls |>
 ```
 
 
-
-
 What do you notice? What do you wonder based on the graph created?
-> Insert Answer Here
+> Arms control had the highest peak of any voting event by the UN. The trend of voting increased over the years. 
 
 
 

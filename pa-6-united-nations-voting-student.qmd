@@ -237,7 +237,7 @@ dim(roll_calls)
 ```
 
 
-> Insert Answer Here
+> The number of rows & columns do NOT match, calling for a joining of the datasets
 
 
 
@@ -245,27 +245,27 @@ Now let's try joining the `roll_calls` with the `issues` data.  Compare the foll
 
 ```{r}
 roll_calls |> 
-  left_join(issues, by = "rcid") #description of join
+  left_join(issues, by = "rcid") #adds matching rcid data from issues into roll_calls
 ```
 
 ```{r}
 roll_calls |> 
-  right_join(issues, by = "rcid") #description of join
+  right_join(issues, by = "rcid") #adds matching rcid values from roll_calls and adding to issues
 ```
 
 ```{r}
 roll_calls |> 
-  full_join(issues, by = "rcid") #description of join
+  full_join(issues, by = "rcid") #combination of both datasets rcid values in their entirety, whether they match or not
 ```
 
 ```{r}
 roll_calls |> 
-  inner_join(issues, by = "rcid") #description of join
+  inner_join(issues, by = "rcid") #joining the matching values of rcid from both datasets
 ```
 
 **If we are only interested in retaining the records associated with the `issues` labeled in our data, which join(s) should we use?**
 
-> Insert answer here
+> Right_join
 
 
 
